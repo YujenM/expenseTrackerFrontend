@@ -10,8 +10,8 @@
           <h2 class="nav-title text-red-darken-1 mb-3">Expense Tracker</h2>
         </div>
         <nav>
-          <ul>
-            <li v-for="item in navItem" :key="item.id" class="nav-li mt-5 ">
+          <ul class="ml-0">
+            <li v-for="item in navItem" :key="item.id" class="nav-li mt-5">
               <router-link :to="item.path" class="router-li" exact>
                 <v-icon>{{ item.icon }}</v-icon>
                 {{ item.name }}
@@ -66,10 +66,11 @@ export default {
       this.isSidebarOpen = false;
     },
     logout() {
-      localStorage.removeItem("Authentication");
+      localStorage.removeItem("token");
       this.$router.push({
         name: "Login",
       });
+      this.$setSnackbar("Logout successful", "success");
     },
   },
 };
@@ -93,6 +94,10 @@ export default {
 }
 .sidebar.sidebar-open {
   transform: translateX(0);
+}
+ul {
+  margin: 0;
+  padding: 0;
 }
 
 .close-btn {

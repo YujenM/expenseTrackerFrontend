@@ -6,6 +6,7 @@ import AuthLayout from "../layouts/AuthLayout.vue";
 import Dashboard from "../../pages/Dashboard.vue";
 import HomePage from "../../pages/HomePage.vue";
 import Login from "../../pages/Login.vue";
+import Signup from "../../pages/Signup.vue";
 
 const routes = [
   {
@@ -34,12 +35,17 @@ const routes = [
     children: [
       {
         path: "",
-        redirect: "/auth/login", 
+        redirect: "/auth/login",
       },
       {
         path: "login",
         name: "Login",
         component: Login,
+      },
+      {
+        path: "signup",
+        name: "Signup",
+        component: Signup,
       },
     ],
   },
@@ -48,6 +54,20 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
+});
+
+router.beforeEach((to, from) => {
+  const token = localStorage.getItem("token");
+
+  if (to.path.startsWith("/auth")) {
+    return true;
+  }
+
+  if (!token) {
+    return { name: "Login" };
+  }
+
+  return true;    
 });
 
 export default router;

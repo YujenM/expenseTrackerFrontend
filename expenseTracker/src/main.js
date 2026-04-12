@@ -6,6 +6,8 @@ import "vuetify/styles";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
 import "@mdi/font/css/materialdesignicons.css";
+import snackbar from "./plugins/snackbar";
+import axios from "axios";
 const vuetify = createVuetify({
   components,
   directives,
@@ -16,5 +18,9 @@ const vuetify = createVuetify({
     defaultSet: "mdi",
   },
 });
+axios.defaults.baseURL = import.meta.env.VITE_BASE_URL;
+const app = createApp(App);
+app.config.globalProperties.$http = axios;
+app.use(snackbar);
 
-createApp(App).use(router).use(vuetify).mount("#app");
+app.use(router).use(vuetify).mount("#app");
