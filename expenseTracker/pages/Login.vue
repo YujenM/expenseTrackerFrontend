@@ -23,8 +23,19 @@
             >
           </p>
           <div class="d-flex justify-center mt-5">
-            <v-btn class="bg-red" type="submit">Login</v-btn>
+            <v-btn
+              class="bg-red"
+              type="submit"
+              :loading="loading"
+              :disabled="loading"
+              v-if="!loading"
+            >
+              Login
+            </v-btn>
+            <v-progress-circular v-else indeterminate color="red" />
           </div>
+
+          <div class="d-flex justify-center mt-3" v-if="loading"></div>
         </v-form>
       </v-card-text>
     </v-card>
@@ -40,6 +51,7 @@ export default {
       email: "",
       password: "",
       showPassword: false,
+      loading: false,
     };
   },
 

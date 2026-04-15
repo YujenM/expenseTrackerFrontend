@@ -7,6 +7,7 @@ import Dashboard from "../../pages/Dashboard.vue";
 import HomePage from "../../pages/HomePage.vue";
 import Login from "../../pages/Login.vue";
 import Signup from "../../pages/Signup.vue";
+import AddProvider from "../../pages/AddProvider.vue";
 
 const routes = [
   {
@@ -26,6 +27,11 @@ const routes = [
         path: "home",
         name: "Home",
         component: HomePage,
+      },
+      {
+        path: "add-provider",
+        name: "AddProvider",
+        component: AddProvider,
       },
     ],
   },
@@ -67,7 +73,7 @@ router.beforeEach((to, from) => {
     return { name: "Login" };
   }
 
-  return true;    
+  return true;
 });
 
 export default router;
