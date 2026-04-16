@@ -1,5 +1,22 @@
 <template>
-  <v-card class="pa-4">
+  <span> {{ greeting }}, {{ userDetails?.user?.fullName }} </span>
+  <herobar
+    :availableBalance="userDetails.totalBalance "
+    :monthlyIncome="monthlyIncome"
+    :monthlyExpense="monthlyExpense"
+  />
+  <v-row>
+    <v-col cols="12" sm="12" md="8">
+      <DashboardBody />
+
+      <DashboardTable :linkedAccounts="userDetails?.user?.accounts" />
+    </v-col>
+     <v-col cols="12" sm="12" md="4">
+      <TopExpenses class="mt-8" />
+    </v-col>
+  </v-row>
+
+  <!-- <v-card class="pa-4">
     <div class="d-flex justify-space-between">
       <div>
         <div v-if="loading">
@@ -14,7 +31,6 @@
       <v-btn class="" icon @click="hideData = !hideData">
         <v-icon>
           {{ hideData ? "mdi-eye-off" : "mdi-eye" }}
-
         </v-icon>
       </v-btn>
     </div>
@@ -23,7 +39,6 @@
       <strong>Total: </strong>
       <span>
         {{ hideData ? "XXXX" : "Rs. " + userDetails.totalBalance }}
-        <!-- here -->
       </span>
     </div>
 
@@ -55,19 +70,33 @@
         </v-data-table>
       </div>
     </v-card>
-  </v-card>
+  </v-card> -->
 </template>
 
 <script>
 import user from "../src/api/user";
+import herobar from "../src/components/Dashboard/herobar.vue";
+
+import DashboardBody from "../src/components/Dashboard/DashboardBody.vue";
+import DashboardTable from "../src/components/Dashboard/DashboardTable.vue";
+import TopExpenses from "../src/components/common/TopExpenses.vue";
 
 export default {
+  components: {
+    herobar,
+    DashboardBody,
+    DashboardTable,
+    TopExpenses,
+  },
   data() {
     return {
+      availableBalance: 0,
+      monthlyIncome: 0,
+      monthlyExpense: 0,
       greeting: "",
       userDetails: {},
       loading: true,
-      hideData: false, // here
+      hideData: false, 
       headers: [
         { title: "Account", value: "account_name" },
         { title: "Provider", value: "provider" },
