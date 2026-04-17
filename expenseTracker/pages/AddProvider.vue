@@ -4,7 +4,11 @@
     <v-btn
       class="bg-red"
       append-icon="mdi-briefcase-plus-outline"
-      @click="isAddAccount = true"
+      @click="
+        isAddAccount = true;
+        isEdit = false;
+        selectedAccount = null;
+      "
     >
       Add Account
     </v-btn>
@@ -22,7 +26,39 @@
         isAddAccount = false;
         fetchAccount();
       "
+      :accountTitle="isEdit ? 'Update Account' : 'Add New Account'"
+      :accountData="selectedAccount"
+      :isEdit="isEdit"
     />
+  </v-dialog>
+
+  <v-dialog v-model="isAccountDelete" max-width="400px">
+    <v-card>
+      <v-card-title class="text-h5">Confirm Deletion</v-card-title>
+      <v-card-text
+        >Are you sure you want to delete this "{{
+          selectedAccount.account_name
+        }}" account?</v-card-text
+      >
+      <v-card-actions>
+        <div class="d-flex justify-space-between w-100 pa-3">
+          <v-btn
+            class="text-white w-50 "
+            style="background-color: grey"
+            text
+            @click="isAccountDelete = false"
+            >Cancel</v-btn
+          >
+          <v-btn
+            class="text-white w-50 mx-2"
+            style="background-color: red"
+            text
+            @click="confirmDelete"
+            >Delete</v-btn
+          >
+        </div>
+      </v-card-actions>
+    </v-card>
   </v-dialog>
 </template>
 
@@ -36,6 +72,9 @@ export default {
     return {
       accounts: [],
       isAddAccount: false,
+      isEdit: false,
+      selectedAccount: null,
+      isAccountDelete: false,
     };
   },
   mounted() {
@@ -59,11 +98,30 @@ export default {
     },
 
     editAccount(account) {
-      console.log("Edit account:", account);
+      this.selectedAccount = account;
+      this.isEdit = true;
+      this.isAddAccount = true;
     },
 
     deleteAccount(account) {
-      console.log("Delete account:", account);
+      this.selectedAccount = account;
+      this.isAccountDelete = true;
+    },
+
+    confirmDelete() {
+      this.$http
+        .delete(account.updateDeleteAccount(this.selectedAccount.id))
+        .then(() => {
+          this.$setSnackbar("Account deleted successfully", "success");
+          this.fetchAccount();
+        })
+        .catch((error) => {
+          this.$setSnackbar("Error deleting account", "error");
+          console.error("Error deleting account:", error);
+        })
+        .finally(() => {
+          this.isAccountDelete = false;
+        });
     },
   },
 

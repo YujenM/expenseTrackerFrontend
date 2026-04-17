@@ -5,9 +5,9 @@
     <div class="d-flex align-center">
       <v-icon size="45" class="bg-red rounded">mdi-account</v-icon>
       <div class="ml-4">
-        <v-title>Account Activity</v-title>
+        <v-card-title>Account Activity</v-card-title>
         <div>
-          <v-body>Income</v-body>
+          <v-card-text>Income</v-card-text>
           <span><v-icon>mdi-circle-small</v-icon>2 days ago</span>
         </div>
       </div>

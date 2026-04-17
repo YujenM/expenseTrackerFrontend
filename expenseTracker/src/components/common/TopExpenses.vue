@@ -1,6 +1,6 @@
 <template>
   <v-card class="pa-4">
-    <v-title style="font-size: 1.5rem" class="pa-4">Top Expenses</v-title>
+    <v-card-title style="font-size: 1.5rem" class="pa-4">Top Expenses</v-card-title>
     <ul class="mr-4" style="list-style-type: disc; padding-left: 20px">
         <li class="d-flex justify-space-between">
           <p>Rent</p>

@@ -1,8 +1,8 @@
 <template>
   <v-card class="pa-4">
     <div class="d-flex justify-space-between align-center">
-      <v-title>Add New Account</v-title>
-      
+      <v-card-title>{{ accountTitle }}</v-card-title>
+
       <v-icon @click="$emit('close')">mdi-close</v-icon>
     </div>
 
@@ -17,6 +17,7 @@
           item-title="name"
           item-value="id"
           @click="fetchProvider"
+          :disabled="isEdit"
         >
         </v-select>
 
@@ -26,7 +27,6 @@
           class="mt-4"
         ></v-text-field>
 
-        <!-- FIXED -->
         <v-btn class="mt-4 bg-red" block @click="addaccounts">
           Save Account
         </v-btn>
@@ -40,6 +40,13 @@ import account from "../../api/account";
 
 export default {
   emits: ["close", "accountAdded"],
+
+  props: {
+    accountTitle: String,
+    accountData: Object,
+    isEdit: Boolean,
+  },
+
   data() {
     return {
       providers: [],
@@ -59,6 +66,14 @@ export default {
     },
   },
 
+  mounted() {
+    if (this.isEdit && this.accountData) {
+      this.selectedProvider = this.accountData.account_name;
+      this.accountName = this.accountData.account_name;
+      this.balance = this.accountData.balance;
+    }
+  },
+
   methods: {
     fetchProvider() {
       this.$http.get(account.getProvider).then((response) => {
@@ -67,19 +82,30 @@ export default {
     },
 
     addaccounts() {
-      this.$http
-        .post(account.account, {
-          provider_id: this.selectedProvider,
-          account_name: this.accountName,
-          balance: parseFloat(this.balance),
-        })
-        .then((response) => {
-          this.$setSnackbar("Account added successfully", "success");
+
+      const request = this.isEdit
+        ? this.$http.put(`${account.updateDeleteAccount(this.accountData.id)}`, {
+            balance: parseFloat(this.balance),
+          })
+        : this.$http.post(account.account, {
+            provider_id: this.selectedProvider,
+            account_name: this.accountName,
+            balance: parseFloat(this.balance),
+          });
+
+      request
+        .then(() => {
+          this.$setSnackbar(
+            this.isEdit
+              ? "Account updated successfully"
+              : "Account added successfully",
+            "success",
+          );
           this.$emit("accountAdded");
         })
         .catch((error) => {
-          this.$setSnackbar("Error adding account", "error");
-          console.error("Error adding account:", error);
+          this.$setSnackbar("Error saving account", "error"); // CHANGED
+          console.error("Error saving account:", error);
         });
     },
   },
