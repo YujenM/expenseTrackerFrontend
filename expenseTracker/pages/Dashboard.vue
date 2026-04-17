@@ -1,76 +1,32 @@
 <template>
-  <span> {{ greeting }}, {{ userDetails?.user?.fullName }} </span>
-  <herobar
-    :availableBalance="userDetails.totalBalance "
-    :monthlyIncome="monthlyIncome"
-    :monthlyExpense="monthlyExpense"
-  />
+  <div>
+    <v-skeleton-loader v-if="loadingUser" type="card" class="mt-4" />
+    <span v-else> {{ greeting }}, {{ userDetails?.user?.fullName }} </span>
+  </div>
+
+  <div>
+    <v-skeleton-loader v-if="loadingUser" type="card" class="mt-4" />
+
+    <herobar
+      v-else
+      :availableBalance="userDetails.totalBalance"
+      :monthlyIncome="monthlyIncome"
+      :monthlyExpense="monthlyExpense"
+    />
+  </div>
   <v-row>
     <v-col cols="12" sm="12" md="8">
       <DashboardBody />
 
-      <DashboardTable :linkedAccounts="userDetails?.user?.accounts" />
+      <div>
+        <v-skeleton-loader v-if="loadingUser" type="table" class="mt-4" />
+        <DashboardTable v-else :linkedAccounts="userDetails?.user?.accounts" />
+      </div>
     </v-col>
-     <v-col cols="12" sm="12" md="4">
+    <v-col cols="12" sm="12" md="4">
       <TopExpenses class="mt-8" />
     </v-col>
   </v-row>
-
-  <!-- <v-card class="pa-4">
-    <div class="d-flex justify-space-between">
-      <div>
-        <div v-if="loading">
-          <v-skeleton-loader type="text" />
-        </div>
-
-        <span v-else class="tex">
-          {{ greeting }}, {{ userDetails.user.fullName }}
-        </span>
-      </div>
-
-      <v-btn class="" icon @click="hideData = !hideData">
-        <v-icon>
-          {{ hideData ? "mdi-eye-off" : "mdi-eye" }}
-        </v-icon>
-      </v-btn>
-    </div>
-
-    <div class="mt-3">
-      <strong>Total: </strong>
-      <span>
-        {{ hideData ? "XXXX" : "Rs. " + userDetails.totalBalance }}
-      </span>
-    </div>
-
-    <v-card class="mt-4">
-      <div v-if="loading">
-        <v-skeleton-loader type="table" />
-      </div>
-
-      <div v-else>
-        <v-data-table
-          :headers="headers"
-          :items="userDetails.user.accounts"
-          class="elevation-1"
-          hide-default-footer
-        >
-          <template v-slot:item.provider="{ item }">
-            <v-avatar size="40">
-              <img
-                :src="item.provider.logo_url"
-                alt="logo"
-                style="width: 100%; height: 100%; object-fit: contain"
-              />
-            </v-avatar>
-          </template>
-
-          <template v-slot:item.balance="{ item }">
-            {{ hideData ? "XXXX" : "Rs. " + item.balance }}
-          </template>
-        </v-data-table>
-      </div>
-    </v-card>
-  </v-card> -->
 </template>
 
 <script>
@@ -96,7 +52,8 @@ export default {
       greeting: "",
       userDetails: {},
       loading: true,
-      hideData: false, 
+      loadingUser: false,
+      hideData: false,
       headers: [
         { title: "Account", value: "account_name" },
         { title: "Provider", value: "provider" },
@@ -125,12 +82,13 @@ export default {
 
     async getUserDetails() {
       try {
+        this.loadingUser = true;
         const response = await this.$http.get(user.getUser);
         this.userDetails = response.data;
       } catch (error) {
         console.error(error);
       } finally {
-        this.loading = false;
+        this.loadingUser = false;
       }
     },
   },

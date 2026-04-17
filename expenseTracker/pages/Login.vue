@@ -57,6 +57,7 @@ export default {
 
   methods: {
     async login() {
+      this.loading = true;
       this.$http
         .post(authApi.login, {
           email: this.email,

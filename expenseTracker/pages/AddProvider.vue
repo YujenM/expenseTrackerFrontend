@@ -1,24 +1,32 @@
 <template>
   <div class="d-flex justify-space-between">
     <div class="text-display-small mb-2">Accounts</div>
-    <v-btn
-      class="bg-red"
-      append-icon="mdi-briefcase-plus-outline"
-      @click="
-        isAddAccount = true;
-        isEdit = false;
-        selectedAccount = null;
-      "
-    >
-      Add Account
-    </v-btn>
+    <div>
+      <v-skeleton-loader v-if="loading" type="button" class=" w-100" />
+      <v-btn
+        v-else
+        class="bg-red"
+        append-icon="mdi-briefcase-plus-outline"
+        @click="
+          isAddAccount = true;
+          isEdit = false;
+          selectedAccount = null;
+        "
+      >
+        Add Account
+      </v-btn>
+    </div>
   </div>
 
-  <AccountTable
-    :accounts="accounts"
-    @edit="editAccount"
-    @delete="deleteAccount"
-  />
+  <div>
+    <v-skeleton-loader v-if="loading" type="table" class="mt-4" />
+    <AccountTable
+      v-else
+      :accounts="accounts"
+      @edit="editAccount"
+      @delete="deleteAccount"
+    />
+  </div>
   <v-dialog v-model="isAddAccount" persistent max-width="500px">
     <UserAccount
       @close="isAddAccount = false"
@@ -43,7 +51,7 @@
       <v-card-actions>
         <div class="d-flex justify-space-between w-100 pa-3">
           <v-btn
-            class="text-white w-50 "
+            class="text-white w-50"
             style="background-color: grey"
             text
             @click="isAccountDelete = false"
@@ -75,6 +83,7 @@ export default {
       isEdit: false,
       selectedAccount: null,
       isAccountDelete: false,
+      loading: false,
     };
   },
   mounted() {
@@ -82,6 +91,7 @@ export default {
   },
   methods: {
     async fetchAccount() {
+      this.loading = true;
       this.$http
         .get(account.account)
         .then((response) => {
@@ -89,6 +99,9 @@ export default {
         })
         .catch((error) => {
           console.error(error);
+        })
+        .finally(() => {
+          this.loading = false;
         });
     },
     fetchProvider() {

@@ -36,7 +36,16 @@
             >
           </p>
           <div class="d-flex justify-center mt-5">
-            <v-btn class="bg-red" type="submit">Sign In</v-btn>
+            <v-btn
+              class="bg-red"
+              type="submit"
+              :loading="loading"
+              :disabled="loading"
+              v-if="!loading"
+            >
+              Sign In
+            </v-btn>
+            <v-progress-circular v-else indeterminate color="red" />
           </div>
         </v-form>
       </v-card-text>
@@ -55,20 +64,21 @@ export default {
       email: "",
       password: "",
       showPassword: false,
+      loading: false,
     };
   },
 
   methods: {
     async signup() {
+      this.loading = true;
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(this.email)) {
-        
-        this.$setSnackbar("Invalid email format", "error"); 
+        this.$setSnackbar("Invalid email format", "error");
         return;
       }
       if (this.password.length < 10) {
-        this.$setSnackbar("Password must be at least 10 characters", "error"); 
-        return; 
+        this.$setSnackbar("Password must be at least 10 characters", "error");
+        return;
       }
 
       this.$http
@@ -81,14 +91,17 @@ export default {
         .then((response) => {
           localStorage.setItem("token", response.data.response);
 
-          this.$setSnackbar("Signup successful", "success"); 
+          this.$setSnackbar("Signup successful", "success");
 
           this.$router.push({ name: "Login" });
         })
         .catch((error) => {
-          const msg = error.response?.data?.message || "Signup failed"; 
+          const msg = error.response?.data?.message || "Signup failed";
 
           this.$setSnackbar(msg, "error");
+        })
+        .finally(() => {
+          this.loading = false;
         });
     },
   },
