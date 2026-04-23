@@ -15,7 +15,7 @@ export default [
     id: 2,
     name: "Income",
     icon: "mdi-cash",
-    path: "/",
+    path: "/income",
   },
   {
     id: 3,

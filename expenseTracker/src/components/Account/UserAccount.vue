@@ -52,7 +52,7 @@ export default {
       providers: [],
       selectedProvider: null,
       accountName: "",
-      balance: "",
+      balance: 0,
     };
   },
 
@@ -82,11 +82,13 @@ export default {
     },
 
     addaccounts() {
-
       const request = this.isEdit
-        ? this.$http.put(`${account.updateDeleteAccount(this.accountData.id)}`, {
-            balance: parseFloat(this.balance),
-          })
+        ? this.$http.put(
+            `${account.updateDeleteAccount(this.accountData.id)}`,
+            {
+              balance: parseFloat(this.balance),
+            },
+          )
         : this.$http.post(account.account, {
             provider_id: this.selectedProvider,
             account_name: this.accountName,
