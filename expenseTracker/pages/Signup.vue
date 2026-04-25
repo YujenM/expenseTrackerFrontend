@@ -78,6 +78,7 @@ export default {
       }
       if (this.password.length < 10) {
         this.$setSnackbar("Password must be at least 10 characters", "error");
+        this.loading = false;
         return;
       }
 
@@ -97,6 +98,7 @@ export default {
         })
         .catch((error) => {
           const msg = error.response?.data?.message || "Signup failed";
+          this.loading = false;
 
           this.$setSnackbar(msg, "error");
         })

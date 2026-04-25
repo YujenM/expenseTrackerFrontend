@@ -59,7 +59,17 @@
 
             <v-card-title>
               <span style="font-weight: bold; font-size: 1.5rem">
-                {{ primarySource?.nextExpectedDate || "" }}
+                {{
+                  primarySource?.nextExpectedDate
+                    ? new Date(
+                        primarySource.nextExpectedDate,
+                      ).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })
+                    : ""
+                }}
               </span>
             </v-card-title>
           </div>
@@ -69,7 +79,7 @@
           </div>
         </div>
       </v-card>
-    </div>  
+    </div>
   </div>
 </template>
 
