@@ -4,11 +4,20 @@
       <span class="text-display-small">Income</span>
     </div>
 
+    <template v-if="isHeroBarLoading">
+      <v-skeleton-loader type="card" class="mt-4" />
+    </template>
     <HeroBar
+      v-else
       :totalIncome="incomeData.totalIncome"
       :primarySource="primarySource"
     />
+
+    <template v-if="isIncomeTableLoading">
+      <v-skeleton-loader type="table-row@6" class="mt-9" />
+    </template>
     <IncomeTable
+      v-else
       class="mt-9"
       :accounts="incomeData"
       @edit="editform($event)"
@@ -199,13 +208,19 @@ export default {
       nextReciveDate: null,
       dateMenu: false,
       nextReciveMenu: false,
+      isHeroBarLoading: false,
+      isIncomeTableLoading: false,
     };
   },
 
   methods: {
     async fetchIncome() {
+      this.isHeroBarLoading = true; 
+      this.isIncomeTableLoading = true; 
       this.$http.get(incomeApi.income).then((response) => {
         this.incomeData = response.data.income;
+        this.isHeroBarLoading = false;
+        this.isIncomeTableLoading = false; 
       });
     },
 
@@ -311,7 +326,7 @@ export default {
     },
 
     async fetchAccount() {
-      this.$http
+      return this.$http
         .get(account.account)
         .then((response) => {
           this.account = response.data.data.accounts;
