@@ -76,6 +76,7 @@
               item-value="id"
               variant="outlined"
               prepend-inner-icon="mdi-account"
+              :disabled="!!editingItem"
               required
             />
           </v-col>

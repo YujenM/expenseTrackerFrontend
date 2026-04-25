@@ -11,7 +11,7 @@
 
         <v-card-title class="flex-grow-1 d-flex align-center">
           <span style="font-weight: bold; font-size: clamp(1.5rem, 5vw, 4rem)">
-            Rs {{ totalIncome }}
+            Rs {{ totalIncome ? totalIncome : 0 }}
           </span>
         </v-card-title>
 
