@@ -21,7 +21,7 @@ export default [
     id: 3,
     name: "Expenses",
     icon: "mdi-cart-minus",
-    path: "/",
+    path: "/expense",
   },
   {
     id: 4,

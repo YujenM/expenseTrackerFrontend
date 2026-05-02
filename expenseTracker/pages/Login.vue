@@ -69,6 +69,7 @@ export default {
           this.$setSnackbar("Login successful", "success");
         })
         .catch((error) => {
+          this.loading = false;
           this.$setSnackbar("Invalid credentials", "error");
           console.error("Login failed:", error);
         });

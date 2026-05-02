@@ -10,13 +10,13 @@
     <herobar
       v-else
       :availableBalance="userDetails.totalBalance"
-      :monthlyIncome="monthlyIncome"
-      :monthlyExpense="monthlyExpense"
+      :monthlyIncome="userDetails.monthlyIncome"
+      :monthlyExpense="userDetails.monthlyExpense"
     />
   </div>
   <v-row>
     <v-col cols="12" sm="12" md="8">
-      <DashboardBody />
+      <DashboardBody :recentActivities="recentActivities" />
 
       <div>
         <v-skeleton-loader v-if="loadingUser" type="table" class="mt-4" />
@@ -51,8 +51,10 @@ export default {
       monthlyExpense: 0,
       greeting: "",
       userDetails: {},
+      recentActivities: {},
       loading: true,
       loadingUser: false,
+      isRecentActivities: false,
       hideData: false,
       headers: [
         { title: "Account", value: "account_name" },
@@ -65,6 +67,7 @@ export default {
   mounted() {
     this.setGreeting();
     this.getUserDetails();
+    this.getRecentActiities();
   },
 
   methods: {
@@ -90,6 +93,19 @@ export default {
       } finally {
         this.loadingUser = false;
       }
+    },
+
+    async getRecentActiities() {
+      this.isRecentActivities = true;
+      this.$http
+        .get(user.recent)
+        .then((response) => {
+          this.isRecentActivities = false;
+          this.recentActivities = response.data.data;
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     },
   },
 };

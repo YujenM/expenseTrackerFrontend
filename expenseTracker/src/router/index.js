@@ -9,6 +9,7 @@ import Login from "../../pages/Login.vue";
 import Signup from "../../pages/Signup.vue";
 import AddProvider from "../../pages/AddProvider.vue";
 import Income from "../../pages/Income.vue";
+import Expense from "../../pages/Expense.vue";
 
 const routes = [
   {
@@ -38,6 +39,11 @@ const routes = [
         path: "income",
         name: "Income",
         component: Income,
+      },
+      {
+        path: "expense",
+        name: "Expense",
+        component: Expense,
       },
     ],
   },

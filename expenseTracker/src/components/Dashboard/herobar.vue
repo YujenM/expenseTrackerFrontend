@@ -1,5 +1,6 @@
 <template>
   <v-row class="my-4" align="stretch">
+    
     <!-- Available Balance -->
     <v-col cols="12" sm="12" md="6" class="d-flex">
       <v-card class="pa-4 w-100 d-flex flex-column" elevation="2" rounded="lg">
