@@ -34,7 +34,15 @@
           >{{ monthlySpentOnpercentage }}% of Rs
           {{ monthlyBudget }} budget</span
         >
-        <span style="font-size: 0.85rem">Rs 3,324.50 left</span>
+        <span style="font-size: 0.85rem"
+          >Rs
+          {{
+            monthlyBudget
+              ? Math.floor(monthlyBudget || 0) - Math.floor(monthlyExpense || 0)
+              : 0
+          }}
+          left</span
+        >
       </div>
     </v-card>
   </div>

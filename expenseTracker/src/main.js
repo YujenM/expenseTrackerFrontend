@@ -1,6 +1,7 @@
 import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./router";
+import { createPinia } from "pinia";
 import "vuetify/styles";
 import { createVuetify } from "vuetify";
 import * as components from "vuetify/components";
@@ -31,6 +32,7 @@ axios.interceptors.request.use(
   (error) => Promise.reject(error),
 );
 const app = createApp(App);
+app.use(createPinia());
 app.config.globalProperties.$http = axios;
 app.use(snackbar);
 

@@ -7,15 +7,18 @@
     <v-skeleton-loader type="card" class="mt-2" />
   </tmeplate>
 
-  <HeroBar
-    v-else
-    class="mt-2"
-    :monthlyBudget="getExpenseData.monthlyBudget"
-    :monthlyExpense="getExpenseData.monthlyExpense"
-    :weeklyExpense="getExpenseData.weeklyExpense"
-    :monthlySpentOnpercentage="getExpenseData.monthlySpentOnpercentage"
-    :dailyAverage="getExpenseData.dailyAverage"
-  />
+  <div v-else @click="isMonthlyBudget = true" style="cursor: pointer">
+    <HeroBar
+      class="mt-2"
+      :monthlyBudget="getExpenseData.monthlyBudget"
+      :monthlyExpense="getExpenseData.monthlyExpense"
+      :weeklyExpense="getExpenseData.weeklyExpense"
+      :monthlySpentOnpercentage="getExpenseData.monthlySpentOnpercentage"
+      :dailyAverage="getExpenseData.dailyAverage"
+    />
+  </div>
+
+  <ExpenseCategory :category="expenseCategory" />
 
   <template v-if="isGetExpense">
     <v-skeleton-loader type="table-row@6" class="mt-9" />
@@ -163,6 +166,41 @@
       </v-row>
     </v-card>
   </v-dialog>
+
+  <v-dialog v-model="isMonthlyBudget" width="560px">
+    <v-card class="pa-3">
+      <div class="d-flex justify-space-between align-center">
+        <v-card-title class="text-red">Add your monthly Budget</v-card-title>
+        <v-icon @click="isMonthlyBudget = false" class="mx-3" color="red">
+          mdi-close
+        </v-icon>
+      </div>
+
+      <v-card-text>
+        <p class="text-body-2 text-medium-emphasis mb-4">
+          Set your monthly budget to track and manage your expenses effectively.
+        </p>
+        <label class="text-caption text-medium-emphasis mb-1 d-block"
+          >Monthly Budget</label
+        >
+        <v-text-field
+          v-model="monthlyBudget"
+          type="number"
+          prepend-inner-icon="mdi-currency-usd"
+          variant="outlined"
+          placeholder="Enter your monthly budget..."
+        />
+      </v-card-text>
+
+      <v-card-actions class="px-4 pb-3">
+        <v-spacer />
+        <v-btn @click="isMonthlyBudget = false" variant="text">Cancel</v-btn>
+        <v-btn @click="saveMonthlyBudget()" class="bg-red" variant="flat"
+          >Save</v-btn
+        >
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>
@@ -171,11 +209,12 @@ import expense from "../src/api/expense";
 import ExpenseTable from "../src/components/expense/ExpenseTable.vue";
 import category from "../src/api/category";
 import account from "../src/api/account";
-
+import ExpenseCategory from "../src/components/expense/ExpenseCategory.vue";
 export default {
   components: {
     HeroBar,
     ExpenseTable,
+    ExpenseCategory,
   },
   data() {
     return {
@@ -184,6 +223,7 @@ export default {
       isExpense: false,
       editingItem: null,
       category: [],
+      expenseCategory: [],
       account: [],
       selectedCategory: null,
       selectedAccount: null,
@@ -193,11 +233,15 @@ export default {
       amount: 0,
       expenseId: null,
       isDeleteModel: false,
+      isMonthlyBudget: false,
+      monthlyBudget: null,
       deletingExpenseData: [],
+      budgetChecked: false,
     };
   },
   mounted() {
     this.getExpense();
+    this.fetchExpenseCategory();
   },
   methods: {
     closeDialog() {
@@ -217,9 +261,31 @@ export default {
         .then((response) => {
           this.getExpenseData = response.data.data;
           this.isGetExpense = false;
+          if (!this.budgetChecked) {
+            this.getUserMonthlyBudget();
+          }
         })
         .catch((err) => {
           this.isGetExpense = false;
+          console.error(err);
+        });
+    },
+
+    getUserMonthlyBudget() {
+      this.budgetChecked = true;
+      const budget = this.getExpenseData.monthlyBudget;
+      if (!budget) {
+        this.isMonthlyBudget = true;
+      } else {
+        this.monthlyBudget = budget;
+      }
+    },
+    async fetchExpenseCategory() {
+      this.$http(expense.categoryExpense)
+        .then((response) => {
+          this.expenseCategory = response.data.data;
+        })
+        .catch((err) => {
           console.error(err);
         });
     },
@@ -243,6 +309,26 @@ export default {
         })
         .catch(() => {
           this.$setSnackbar("Failed to fetch account", "error");
+        });
+    },
+
+    saveMonthlyBudget() {
+      if (this.monthlyBudget < 100) {
+        this.$setSnackbar("Keep monthly budget more than 100 Rs");
+        return;
+      }
+      this.$http
+        .put(expense.monthlyBudget, {
+          amount: this.monthlyBudget,
+        })
+        .then((res) => {
+          this.$setSnackbar("Monthly Budget added successfully", "success");
+          this.isMonthlyBudget = false;
+          this.getExpense();
+        })
+        .catch((err) => {
+          console.error(err);
+          this.$setSnackbar("Failed to add monthly budget", "error");
         });
     },
 
@@ -270,6 +356,7 @@ export default {
           this.$setSnackbar("Expense has been deleted");
           this.isDeleteModel = false;
           this.getExpense();
+          this.fetchExpenseCategory();
         })
         .catch((err) => {
           console.error(err);
@@ -292,13 +379,13 @@ export default {
             this.$setSnackbar("Expense updated successfully", "success");
             this.closeDialog();
             this.getExpense();
+            this.fetchExpenseCategory();
           })
           .catch((err) => {
             this.$setSnackbar("Failed to update expense", "error");
             console.error(err);
           });
       } else {
-        console.log("here1");
         this.$http
           .post(expense.expense, payload)
           .then(() => {

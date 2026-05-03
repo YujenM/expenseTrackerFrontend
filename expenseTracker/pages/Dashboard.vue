@@ -36,7 +36,7 @@ import herobar from "../src/components/Dashboard/herobar.vue";
 import DashboardBody from "../src/components/Dashboard/DashboardBody.vue";
 import DashboardTable from "../src/components/Dashboard/DashboardTable.vue";
 import TopExpenses from "../src/components/common/TopExpenses.vue";
-
+import { useAuthStore } from "../src/store";
 export default {
   components: {
     herobar,
@@ -88,6 +88,9 @@ export default {
         this.loadingUser = true;
         const response = await this.$http.get(user.getUser);
         this.userDetails = response.data;
+        const authStore = useAuthStore();
+        authStore.setUser(response.data.user);
+        authStore.setUserMonthlyBudget(response.data.monthlyIncome);
       } catch (error) {
         console.error(error);
       } finally {
