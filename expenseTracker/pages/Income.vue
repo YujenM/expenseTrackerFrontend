@@ -21,7 +21,7 @@
       class="mt-9"
       :accounts="incomeData"
       @edit="editform($event)"
-      @delete="deleteform($event)"
+      @delete="openDeleteDailog($event)"
     />
 
     <v-btn
@@ -170,6 +170,29 @@
       </v-form>
     </v-card>
   </v-dialog>
+
+  <v-dialog v-model="isDeleteModel" width="560px">
+    <v-card class="pa-2 rounded-xl">
+      <div class="mx-3 my-2 d-flex justify-space-between">
+        <v-title class="text-red">Delete Expense</v-title>
+        <v-icon @click="isDeleteModel = false" class="mx-3" color="red"
+          >mdi-close</v-icon
+        >
+      </div>
+      <v-card-text>Do you really want yo delete this income?</v-card-text>
+      <v-row class="pa-3">
+        <v-col cols="6">
+          <v-btn @click="isDeleteModel = false" class="w-100">cancel</v-btn>
+        </v-col>
+
+        <v-col cols="6">
+          <v-btn @click="deleteIncome(deleteIncomeData.id)" class="w-100 bg-red"
+            >Delete</v-btn
+          >
+        </v-col>
+      </v-row>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>
@@ -196,6 +219,7 @@ export default {
       primarySource: [],
       category: [],
       account: [],
+      deleteIncomeData: [],
       isPrimarySource: false,
       isAddIncome: false,
       editingItem: null,
@@ -210,17 +234,18 @@ export default {
       nextReciveMenu: false,
       isHeroBarLoading: false,
       isIncomeTableLoading: false,
+      isDeleteModel: false,
     };
   },
 
   methods: {
     async fetchIncome() {
-      this.isHeroBarLoading = true; 
-      this.isIncomeTableLoading = true; 
+      this.isHeroBarLoading = true;
+      this.isIncomeTableLoading = true;
       this.$http.get(incomeApi.income).then((response) => {
         this.incomeData = response.data.income;
         this.isHeroBarLoading = false;
-        this.isIncomeTableLoading = false; 
+        this.isIncomeTableLoading = false;
       });
     },
 
@@ -306,8 +331,15 @@ export default {
       this.isPrimarySource = false;
     },
 
-    deleteform(item) {
-      this.$http.delete(incomeApi.updateDeleteIncome(item.id)).then(() => {
+    openDeleteDailog(item) {
+      this.deleteIncomeData = item;
+      this.isDeleteModel = true;
+    },
+
+    deleteIncome(itemId) {
+      this.$http.delete(incomeApi.updateDeleteIncome(itemId)).then(() => {
+        this.isDeleteModel = false;
+        this.deleteIncomeData = null;
         this.fetchIncome();
         this.fetchprimarySource();
         this.$setSnackbar(`${item.source} sucessfully deleted`, "success");

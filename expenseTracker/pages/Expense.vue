@@ -379,7 +379,7 @@ export default {
             this.$setSnackbar("Expense updated successfully", "success");
             this.closeDialog();
             this.getExpense();
-            this.fetchExpenseCategory();
+            this.fetchExpenseCategory(w);
           })
           .catch((err) => {
             this.$setSnackbar("Failed to update expense", "error");

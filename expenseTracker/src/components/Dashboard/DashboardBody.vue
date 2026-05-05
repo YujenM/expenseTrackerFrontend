@@ -13,48 +13,51 @@
     </div>
 
     <!-- Activity list -->
-    <v-card
-      v-else
-      v-for="activity in recentActivities"
-      :key="activity.id"
-      class="pa-3 pa-sm-4 d-flex justify-space-between align-center mb-2"
-    >
-      <div class="d-flex align-center" style="min-width: 0">
-        <div
-          style="background-color: #eeeeee; flex-shrink: 0"
-          class="d-flex justify-center align-center pa-2 mx-2 mx-sm-3 rounded"
-        >
-          <v-icon size="28" class="bg-gray rounded">{{
-            activity.categoryImage
-          }}</v-icon>
-        </div>
+    <div v-else class="activity-scroll">
+      <v-card
+        v-for="activity in recentActivities"
+        :key="activity.id"
+        class="pa-3 pa-sm-4 d-flex justify-space-between align-center mb-2"
+      >
+        <div class="d-flex align-center" style="min-width: 0">
+          <div
+            style="background-color: #eeeeee; flex-shrink: 0"
+            class="d-flex justify-center align-center pa-2 mx-2 mx-sm-3 rounded"
+          >
+            <v-icon size="28" class="bg-gray rounded">{{
+              activity.categoryImage
+            }}</v-icon>
+          </div>
 
-        <div style="min-width: 0">
-          <v-card-title class="pa-0 text-body-1 text-sm-h6 text-truncate">{{
-            activity.title
-          }}</v-card-title>
+          <div style="min-width: 0">
+            <v-card-title class="pa-0 text-body-1 text-sm-h6 text-truncate">{{
+              activity.title
+            }}</v-card-title>
 
-          <div class="d-flex align-center flex-wrap" style="gap: 4px">
-            <span class="text-caption text-sm-body-2">{{ activity.type }}</span>
-            <span style="font-size: 18px; line-height: 0">•</span>
-            <span class="text-caption text-sm-body-2">{{
-              formatDate(activity.date)
-            }}</span>
+            <div class="d-flex align-center flex-wrap" style="gap: 4px">
+              <span class="text-caption text-sm-body-2">{{
+                activity.type
+              }}</span>
+              <span style="font-size: 18px; line-height: 0">•</span>
+              <span class="text-caption text-sm-body-2">{{
+                formatDate(activity.date)
+              }}</span>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div style="flex-shrink: 0" class="ml-2">
-        <span
-          :style="{
-            fontSize: 'clamp(1rem, 3vw, 1.5rem)',
-            color: activity.type === 'expense' ? 'red' : 'inherit',
-          }"
-        >
-          {{ activity.amount }}
-        </span>
-      </div>
-    </v-card>
+        <div style="flex-shrink: 0" class="ml-2">
+          <span
+            :style="{
+              fontSize: 'clamp(1rem, 3vw, 1.5rem)',
+              color: activity.type === 'expense' ? 'red' : 'inherit',
+            }"
+          >
+            {{ activity.amount }}
+          </span>
+        </div>
+      </v-card>
+    </div>
   </div>
 </template>
 
@@ -78,3 +81,16 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.activity-scroll {
+  max-height: 400px;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.activity-scroll::-webkit-scrollbar {
+  display: none;
+}
+</style>
